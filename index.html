@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="BuildDeploymentTestApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build, Deployment, Test UI</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="app.js"></script>
+</head>
+<body ng-controller="BuildDeploymentTestController">
+
+    <div class="container">
+        <div class="section">
+            <label for="one_click_play_branch">One-Click-Play Branch</label>
+            <input type="text" id="one_click_play_branch" ng-model="oneClickPlayBranch">
+        </div>
+        <div class="section" id="build-section">
+            <h3>BUILD SECTION</h3>
+            <label>
+                <input type="checkbox" ng-model="enableBuild">
+                Enable Build
+            </label>
+            <div class="param-wrapper" ng-disabled="!enableBuild">
+                <!-- Inside the BUILD_SUT section -->
+                <label for="build_sut">BUILD_SUT</label>
+                <select id="build_sut" class="small" ng-model="buildSut" ng-change="updateReleaseTags()">
+                    <option value="">Select...</option>
+                    <option value="policy_all">Policy All</option>
+                    <option value="policy_specific">Policy Specific</option>
+                    <option value="bsf_all">BSF All</option>
+                    <option value="bsf_specific">BSF Specific</option>
+                    <option value="policy_bsf_all">Policy-BSF All</option>
+                    <option value="policy_bsf_specific">Policy-BSF Specific</option>
+                    <option value="common_svc_specific">Common SVC Specific</option>
+                    <option value="common_svc_all">Common SVC All</option>
+                    <option value="jars_specific">Jars Specific</option>
+                </select>
+
+                <!-- Release Tags -->
+                <label for="policy_release_tag" ng-show="showPolicyReleaseTag">Policy Release Tag</label>
+                <input type="text" id="policy_release_tag" class="small" ng-show="showPolicyReleaseTag" ng-disabled="!enableBuild" ng-model="policyReleaseTag">
+
+                <label for="bsf_release_tag" ng-show="showBsfReleaseTag">BSF Release Tag</label>
+                <input type="text" id="bsf_release_tag" class="small" ng-show="showBsfReleaseTag" ng-disabled="!enableBuild" ng-model="bsfReleaseTag">
+
+                <label for="common_release_tag" ng-show="showCommonReleaseTag">Common Release Tag</label>
+                <input type="text" id="common_release_tag" class="small" ng-show="showCommonReleaseTag" ng-disabled="!enableBuild" ng-model="commonReleaseTag">
+
+                <label for="build_ats" ng-disabled="!enableBuild">BUILD_ATS</label>
+                <input type="checkbox" id="build_ats" ng-model="buildAts" ng-disabled="!enableBuild">
+                <label for="csar" ng-disabled="!enableBuild">CSAR</label>
+                <input type="checkbox" id="csar" ng-model="csar" ng-disabled="!enableBuild">
+            </div>
+            <!-- <div class="param-wrapper" id="enable-pp-branch">
+                <label>Enable PP Branch</label><br>
+                <label ng-repeat="option in ppBranchOptions">
+                    <input type="checkbox" ng-model="ppBranch[option.value]">
+                    {{ option.label }}
+                </label>
+            </div> -->
+
+            <div class="param-wrapper" id="enable-pp-branch">
+                <label>Enable PP Branch</label><br>
+                <div class="checkbox-row" ng-repeat="option in ppBranchOptions">
+                    <label>
+                        <input type="checkbox" ng-model="ppBranch[option.value]">
+                        {{ option.label }}
+                    </label>
+                </div>
+            </div>
+
+            <div ng-repeat="option in ppBranchOptions" ng-show="ppBranch[option.value]" class="param-wrapper">
+                <label for="{{ option.value }}">{{ option.label }}</label>
+                <input type="text" id="{{ option.value }}" class="small" ng-model="ppBranchValues[option.value]">
+            </div>
+
+            <!-- <div class="param-wrapper" id="enable-pp-branch">
+                <label>Enable PP Branch</label><br>
+                <div class="checkbox-row" ng-repeat="option in ppBranchOptions">
+                    <label>
+                        <input type="checkbox" ng-model="ppBranch[option.value]">
+                        {{ option.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="param-wrapper" ng-repeat="option in ppBranchOptions" ng-show="ppBranch[option.value]">
+                <label for="{{ option.value }}">{{ option.label }}</label>
+                <input type="text" id="{{ option.value }}" class="small" ng-model="ppBranchValues[option.value]">
+            </div> -->
+            
+
+
+            
+        </div>
+
+        <!-- Submit Section -->
+        <div class="submit-section">
+            <button class="btn" ng-click="submitForm()">Submit</button>
+            <div ng-show="showParams">
+                <h3>Parameter Key-Value Pairs:</h3>
+                <ul>
+                    <li ng-repeat="(key, value) in parameterList">{{ key }}: {{ value }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <button ng-click="generatePipelineURL()">Trigger Pipeline</button>
+        <p ng-if="pipelineURL">Pipeline URL: <a ng-href="{{ pipelineURL }}">{{ pipelineURL }}</a></p>
+        
+    </div>
+</body>
+</html>
