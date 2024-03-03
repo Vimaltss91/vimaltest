@@ -5,18 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Build, Deployment, Test UI</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-HaXkTllToEqK7+C1vT78aB9I2Zti1fVuLbchzafWhmjI7B7PXlg+BmiHsx48v5cBr1XadJt1uZxVv7jWcjCrVQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="app.js"></script>
 </head>
 <body ng-controller="BuildDeploymentTestController">
 
     <div class="container">
-        <div class="section">
+        <!-- <div class="section">
             <label for="one_click_play_branch">One-Click-Play Branch</label>
             <input type="text" id="one_click_play_branch" ng-model="oneClickPlayBranch">
+        </div> -->
+        <div class="section">
+            <label for="one_click_play_branch">One-Click-Play Branch</label>
+            <select id="one_click_play_branch" ng-model="oneClickPlayBranch" ng-change="updateOneClickBranch()">
+                <option value="dev">Dev</option>
+                <option value="ocnf-pre-dev-mayans">OCNF Pre Dev Mayans</option>
+                <option value="ocngf-pre-dev-titans">OCNGF Pre Dev Titans</option>
+                <option value="other">Other</option>
+            </select>
+            <input type="text" id="other_branch" ng-model="otherBranch" placeholder="Enter other branch" ng-disabled="oneClickPlayBranch !== 'other'" ng-show="showOtherInput">
         </div>
+        
         <div class="section" id="build-section">
-            <h3>BUILD SECTION</h3>
+            <h2>BUILD SECTION</h2>
             <label>
                 <input type="checkbox" ng-model="enableBuild">
                 Enable Build
@@ -39,29 +51,72 @@
 
                 <!-- Release Tags -->
                 <label for="policy_release_tag" ng-show="showPolicyReleaseTag">Policy Release Tag</label>
-                <input type="text" id="policy_release_tag" class="small" ng-show="showPolicyReleaseTag" ng-disabled="!enableBuild" ng-model="policyReleaseTag">
+                <input type="text" id="policy_release_tag" class="small" ng-show="showPolicyReleaseTag"  ng-model="policyReleaseTag">
 
                 <label for="bsf_release_tag" ng-show="showBsfReleaseTag">BSF Release Tag</label>
-                <input type="text" id="bsf_release_tag" class="small" ng-show="showBsfReleaseTag" ng-disabled="!enableBuild" ng-model="bsfReleaseTag">
+                <input type="text" id="bsf_release_tag" class="small" ng-show="showBsfReleaseTag" ng-model="bsfReleaseTag">
 
                 <label for="common_release_tag" ng-show="showCommonReleaseTag">Common Release Tag</label>
                 <input type="text" id="common_release_tag" class="small" ng-show="showCommonReleaseTag" ng-disabled="!enableBuild" ng-model="commonReleaseTag">
 
+                <!-- ATS PARAMTER STARTS -->
+                <h4>ATS PARAMTER</h4>
                 <label for="build_ats" ng-disabled="!enableBuild">BUILD_ATS</label>
                 <input type="checkbox" id="build_ats" ng-model="buildAts" ng-disabled="!enableBuild">
-                <label for="csar" ng-disabled="!enableBuild">CSAR</label>
+                
+                <!-- ATS Parameters -->
+                <div class="param-wrapper" ng-show="enableBuild && buildAts">
+                    <label for="ats_policy_release_tag">ATS_POLICY_RELEASE_TAG</label>
+                    <input type="text" id="ats_policy_release_tag" ng-model="atsPolicyReleaseTag">
+                
+                    <label for="ats_bsf_release_tag">ATS_BSF_RELEASE_TAG</label>
+                    <input type="text" id="ats_bsf_release_tag" ng-model="atsBsfReleaseTag">
+                
+                    <label for="ats_branch">ATS_BRANCH</label>
+                    <input type="text" id="ats_branch" ng-model="atsBranch">
+                
+                    <label for="ats_fw_branch">ATS_FW_BRANCH</label>
+                    <input type="text" id="ats_fw_branch" ng-model="atsFwBranch">
+                
+                    <label for="stub_tag_diam">STUB_TAG_DIAM</label>
+                    <input type="text" id="stub_tag_diam" ng-model="stubTagDiam">
+                </div>
+                <h4>BUILD PARAMTER</h4>
+                <!-- ATS PARAMTER ENDS -->
+                <!-- <label for="build_ats" ng-disabled="!enableBuild">BUILD_ATS</label>
+                <input type="checkbox" id="build_ats" ng-model="buildAts" ng-disabled="!enableBuild"> -->
+                <label for="csar" ng-disabled="!enableBuild">BUILD_CSAR</label>
                 <input type="checkbox" id="csar" ng-model="csar" ng-disabled="!enableBuild">
-            </div>
-            <!-- <div class="param-wrapper" id="enable-pp-branch">
-                <label>Enable PP Branch</label><br>
-                <label ng-repeat="option in ppBranchOptions">
-                    <input type="checkbox" ng-model="ppBranch[option.value]">
-                    {{ option.label }}
-                </label>
-            </div> -->
 
+                <label for="upgrade_charts" ng-disabled="!enableBuild">UPGRADE_CHARTS</label>
+                <input type="checkbox" id="upgrade_charts" ng-model="upgrade_charts" ng-disabled="!enableBuild">
+
+                <label for="overwrite_external_helm" ng-disabled="!enableBuild">OVERWRITE_EXTERNAL_HELM</label>
+                <input type="checkbox" id="overwrite_external_helm" ng-model="overwrite_external_helm" ng-disabled="!enableBuild">
+
+                <label for="build_config_snapshot" ng-disabled="!enableBuild">BUILD_CONFIG_SNAPSHOT</label>
+                <input type="checkbox" id="build_config_snapshot" ng-model="build_config_snapshot" ng-disabled="!enableBuild">
+
+                <label for="pkg_scan" ng-disabled="!enableBuild">PKG_SCAN</label>
+                <input type="checkbox" id="pkg_scan" ng-model="pkg_scan" ng-disabled="!enableBuild">
+
+                <label for="tpd" ng-disabled="!enableBuild">TPD</label>
+                <input type="checkbox" id="tpd" ng-model="tpd" ng-disabled="!enableBuild">
+
+                <label for="ignore_missing_services" ng-disabled="!enableBuild">IGNORE_MISSING_SERVICES</label>
+                <input type="checkbox" id="ignore_missing_services" ng-model="ignore_missing_services" ng-disabled="!enableBuild">
+
+                <!-- <label for="contract_test" ng-disabled="!enableBuild">CONTRACT_TEST</label>
+                <input type="checkbox" id="tpd" ng-model="contract_test" ng-disabled="!enableBuild"> -->
+
+            </div>
+
+
+            
+            <!-- Enable PP Branch Start -->
             <div class="param-wrapper" id="enable-pp-branch">
-                <label>Enable PP Branch</label><br>
+                <h4>Enable PP Branch/Catalog/MIB Branch</h4>
+                <!-- <label>Enable PP Branch/Catalog/MIB Branch</label><br> -->
                 <div class="checkbox-row" ng-repeat="option in ppBranchOptions">
                     <label>
                         <input type="checkbox" ng-model="ppBranch[option.value]">
@@ -75,23 +130,122 @@
                 <input type="text" id="{{ option.value }}" class="small" ng-model="ppBranchValues[option.value]">
             </div>
 
-            <!-- <div class="param-wrapper" id="enable-pp-branch">
-                <label>Enable PP Branch</label><br>
-                <div class="checkbox-row" ng-repeat="option in ppBranchOptions">
+            <!-- Enable Other Build Parameter -->
+            
+        <!-- Add Deployment Button -->
+        <h2>DEPLOYMENT SECTION</h2>
+        <label>
+            <input type="checkbox" ng-model="enableDeployment">
+            Enable Deployment
+        </label>
+
+
+
+        <div ng-if="enableDeployment">
+            <div class="box">
+                <div ng-show="enableDeployment">
+
+                    <h4>DEPLOY PARAMTER</h4>
+ 
                     <label>
-                        <input type="checkbox" ng-model="ppBranch[option.value]">
-                        {{ option.label }}
+                        <input type="checkbox" ng-model="deployParams.CONTRACT_TEST"> CONTRACT_TEST
+                    </label>
+
+                    <label>
+                        <input type="checkbox" ng-model="deployParams.INCLUDE_OCC_TEST"> INCLUDE_OCC_TEST
+                    </label>
+
+                    <label>
+                        <input type="checkbox" ng-model="deployParams.REPORT"> REPORT
+                    </label>
+
+
+                    <h4>ADD RELEASE TAG PARAMTER</h4>
+    
+                </div>
+
+                    <label>
+                        <input type="checkbox" ng-model="addReleaseTagEnabled"> Add Release Tag
+                    </label>
+                    <div ng-show="addReleaseTagEnabled">
+                        <input type="text" ng-model="releaseTags.POLICY_RELEASE_TAG" placeholder="POLICY_RELEASE_TAG">
+                        <input type="text" ng-model="releaseTags.BSF_RELEASE_TAG" placeholder="BSF_RELEASE_TAG">
+                        <input type="text" ng-model="releaseTags.ATS_POLICY_RELEASE_TAG" placeholder="ATS_POLICY_RELEASE_TAG">
+                        <input type="text" ng-model="releaseTags.ATS_BSF_RELEASE_TAG" placeholder="ATS_BSF_RELEASE_TAG">
+                    </div>
+                </div>
+
+        <button class="btn" ng-click="addDeployment()">Add Deployment</button>
+
+        <!-- Deployment Sections -->
+        <div class="group" ng-repeat="deployment in deployments">
+            <h2>Deployment {{$index + 1}}</h2>
+            <!-- <button class="delete-deployment-btn" ng-click="deleteDeployment($index)">
+                <i class="fa fa-trash"></i> 
+            </button> -->
+            <button class="delete-deployment-btn" ng-click="deleteDeployment($index)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                    <path d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M19 5h-4.5l-1-1h-5l-1 1H5v2h14zM7 19h10a2 2 0 0 0 2-2V7H5v10a2 2 0 0 0 2 2zm3-8h1v6H9zm4 0h1v6h-1z"/>
+                </svg>
+            </button>
+
+            <div class="param-wrapper">
+                <label for="nf_type_{{$index}}">NF TYPE</label>
+                <select id="nf_type_{{$index}}" ng-model="deployment.nfType" ng-options="option.value as option.label for option in nfTypeOptions">
+                    <option value="">Select...</option>
+                </select>
+            </div>
+            
+            <label for="bastion_ip_{{$index}}">BASTION_IP</label>
+            <select id="bastion_ip_{{$index}}" class="small" ng-model="deployment.bastionIP" ng-change="updateBastionNamespaces($index)">
+                <option value="">Select...</option>
+                <option value="100.100.10">oci:100.100.10</option>
+                <option value="10.10.2">cicd 10.10.2</option>
+            </select>
+
+            <label for="bastion_namespace_{{$index}}">BASTION_NAMESPACE</label>
+            <select id="bastion_namespace_{{$index}}" class="small" ng-model="deployment.bastionNamespace">
+                <option value="">Select...</option>
+                <option ng-repeat="namespace in deployment.bastionNamespaces" value="{{namespace}}">{{namespace}}</option>
+            </select>
+
+            <label for="csar_{{$index}}">CSAR</label>
+            <input type="checkbox" id="csar_{{$index}}" ng-model="deployment.csar">
+            
+            <!-- Add ASM Checkbox -->
+            <label for="asm_{{$index}}">ASM</label>
+            <input type="checkbox" id="asm_{{$index}}" ng-model="deployment.asm">
+
+            <!-- RADIO BUTTON -->
+
+            <div ng-show="deployment.nfType === 'policy' && !deployment.csar && !deployment.asm">
+                <label for="test_type_{{$index}}">Test Type</label>
+                <label>
+                    <input type="radio" ng-model="deployment.testType" ng-value="null">
+                    None
+                </label>
+                <label ng-repeat="testTypeOption in ['pcf', 'converged']">
+                    <input type="radio" ng-model="deployment.testType" ng-value="testTypeOption">
+                    {{testTypeOption | uppercase}}
+                </label>
+
+            </div>
+            
+                <div ng-show="deployment.nfType === 'bsf'&& !deployment.csar && !deployment.asm">
+                    <label for="test_type_{{$index}}">Test Type</label>
+                    <label>
+                        <input type="radio" ng-model="deployment.testType" ng-value="null">
+                        None
+                    </label>
+                    <label>
+                        <input type="radio" ng-model="deployment.testType" ng-value="'bsf'">
+                        BSF
                     </label>
                 </div>
-            </div>
-            <div class="param-wrapper" ng-repeat="option in ppBranchOptions" ng-show="ppBranch[option.value]">
-                <label for="{{ option.value }}">{{ option.label }}</label>
-                <input type="text" id="{{ option.value }}" class="small" ng-model="ppBranchValues[option.value]">
-            </div> -->
-            
-
-
-            
+        </div>
+        </div>
         </div>
 
         <!-- Submit Section -->
@@ -109,5 +263,6 @@
         <p ng-if="pipelineURL">Pipeline URL: <a ng-href="{{ pipelineURL }}">{{ pipelineURL }}</a></p>
         
     </div>
+</div>
 </body>
 </html>

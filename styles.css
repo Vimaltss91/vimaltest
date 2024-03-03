@@ -5,10 +5,11 @@
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
-    background-color: #f3f3f3; /* Light gray background */
+    background-color: #f7f7f7; /* Light gray background */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+    font-size: small; /* Reduce font size to small */
+} 
 
 /* Group styles */
 .group {
@@ -19,6 +20,7 @@
 .group h2 {
     margin-top: 0;
     margin-bottom: 10px;
+    color: #333; /* Dark gray color */
 }
 
 /* Box styles */
@@ -28,19 +30,29 @@
     margin-bottom: 20px;
 }
 
+label {
+    margin-right: 10px;
+}
+
 /* Build Section styles */
 #build-section {
     background-color: #f0f8ff; /* Alice Blue */
+    padding: 15px;
+    border-radius: 8px;
 }
 
 /* Deployment Section styles */
 #deployment-section {
     background-color: #ffe4e1; /* Misty Rose */
+    padding: 15px;
+    border-radius: 8px;
 }
 
 /* Test Section styles */
 #test-section {
     background-color: #f0e68c; /* Khaki */
+    padding: 15px;
+    border-radius: 8px;
 }
 
 /* Param wrapper styles */
@@ -58,30 +70,35 @@
 
 /* Button styles */
 .btn {
-    display: block;
-    margin-top: 20px;
+    display: inline-block;
     padding: 10px 20px;
     background-color: #4CAF50; /* Green */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
 }
 
 .btn:hover {
     background-color: #45a049; /* Darker green on hover */
 }
 
+/* Text input and select styles */
 input[type="text"], select {
     width: 100%; /* Set width to 100% to occupy full width */
-    padding: 8px;
+    padding: 6px; /* Reduce padding */
     margin-top: 5px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    font-size: small; /* Reduce font size to small */
 }
 
+/* Checkbox row styles */
 .checkbox-row {
     display: inline-block;
     width: 45%; /* Adjust the width to accommodate three checkboxes per row */
@@ -89,5 +106,19 @@ input[type="text"], select {
     margin-right: 5%; /* Add spacing between checkbox rows */
 }
 
+/* Deployment section styles */
+.deployment-section {
+    flex: 1; /* Grow and shrink equally */
+    margin-right: 20px; /* Add spacing between deployment sections */
+}
 
+/* Deployment group styles */
+.deployment-group {
+    margin-bottom: 20px; /* Add space between deployment groups */
+    border: 1px solid #ccc; /* Add border for clarity */
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fff; /* White background */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+}
 
