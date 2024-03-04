@@ -122,3 +122,17 @@ input[type="text"], select {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
 }
 
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 5px; /* Optional: Adjust spacing between checkboxes and labels */
+}
+
+
+
+

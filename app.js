@@ -253,6 +253,30 @@ app.controller('BuildDeploymentTestController', function($scope) {
             }
         }
 
+        if ($scope.enableScans) {
+            if ($scope.fortifyScan && $scope.fortifyTargetBranch) {
+                $scope.parameterList['FORTIFY_SCAN'] = true;
+                if ( $scope.fortifyTargetBranch) {
+                     $scope.parameterList['FORTIFY_TARGET_BRANCH'] = $scope.fortifyTargetBranch;
+                }
+            }
+            if ($scope.bdRepoScan ) {
+                $scope.parameterList['BD_REPO_SCAN'] = true;
+                if ( $scope.bdProjectVersion) {
+                $scope.parameterList['BD_PROJECT_VERSION'] = $scope.bdProjectVersion;
+                }
+                if ( $scope.bdRepoBranch) {
+                $scope.parameterList['BD_REPO_BRANCH'] = $scope.bdRepoBranch;
+                }
+            }
+            if ($scope.mcafeeScan) {
+                $scope.parameterList['MCAFEE_SCAN'] = true;
+            }
+            if ($scope.trivyScan) {
+                $scope.parameterList['TRIVY_SCAN'] = true;
+            }
+        }
+
     
         // Add parameters and their values to the list only if enableBuild is checked
         if ($scope.enableBuild) {

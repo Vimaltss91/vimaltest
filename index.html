@@ -85,31 +85,66 @@
                 <!-- ATS PARAMTER ENDS -->
                 <!-- <label for="build_ats" ng-disabled="!enableBuild">BUILD_ATS</label>
                 <input type="checkbox" id="build_ats" ng-model="buildAts" ng-disabled="!enableBuild"> -->
-                <label for="csar" ng-disabled="!enableBuild">BUILD_CSAR</label>
-                <input type="checkbox" id="csar" ng-model="csar" ng-disabled="!enableBuild">
+                <div class="checkbox-group">
+                    <label for="csar" ng-disabled="!enableBuild">BUILD_CSAR</label>
+                    <input type="checkbox" id="csar" ng-model="csar" ng-disabled="!enableBuild">
 
-                <label for="upgrade_charts" ng-disabled="!enableBuild">UPGRADE_CHARTS</label>
-                <input type="checkbox" id="upgrade_charts" ng-model="upgrade_charts" ng-disabled="!enableBuild">
+                    <label for="upgrade_charts" ng-disabled="!enableBuild">UPGRADE_CHARTS</label>
+                    <input type="checkbox" id="upgrade_charts" ng-model="upgrade_charts" ng-disabled="!enableBuild">
 
-                <label for="overwrite_external_helm" ng-disabled="!enableBuild">OVERWRITE_EXTERNAL_HELM</label>
-                <input type="checkbox" id="overwrite_external_helm" ng-model="overwrite_external_helm" ng-disabled="!enableBuild">
+                    <label for="overwrite_external_helm" ng-disabled="!enableBuild">OVERWRITE_EXTERNAL_HELM</label>
+                    <input type="checkbox" id="overwrite_external_helm" ng-model="overwrite_external_helm" ng-disabled="!enableBuild">
 
-                <label for="build_config_snapshot" ng-disabled="!enableBuild">BUILD_CONFIG_SNAPSHOT</label>
-                <input type="checkbox" id="build_config_snapshot" ng-model="build_config_snapshot" ng-disabled="!enableBuild">
+                    <label for="build_config_snapshot" ng-disabled="!enableBuild">BUILD_CONFIG_SNAPSHOT</label>
+                    <input type="checkbox" id="build_config_snapshot" ng-model="build_config_snapshot" ng-disabled="!enableBuild">
 
-                <label for="pkg_scan" ng-disabled="!enableBuild">PKG_SCAN</label>
-                <input type="checkbox" id="pkg_scan" ng-model="pkg_scan" ng-disabled="!enableBuild">
+                    <label for="pkg_scan" ng-disabled="!enableBuild">PKG_SCAN</label>
+                    <input type="checkbox" id="pkg_scan" ng-model="pkg_scan" ng-disabled="!enableBuild">
 
-                <label for="tpd" ng-disabled="!enableBuild">TPD</label>
-                <input type="checkbox" id="tpd" ng-model="tpd" ng-disabled="!enableBuild">
+                    <label for="tpd" ng-disabled="!enableBuild">TPD</label>
+                    <input type="checkbox" id="tpd" ng-model="tpd" ng-disabled="!enableBuild">
 
-                <label for="ignore_missing_services" ng-disabled="!enableBuild">IGNORE_MISSING_SERVICES</label>
-                <input type="checkbox" id="ignore_missing_services" ng-model="ignore_missing_services" ng-disabled="!enableBuild">
+                    <label for="ignore_missing_services" ng-disabled="!enableBuild">IGNORE_MISSING_SERVICES</label>
+                    <input type="checkbox" id="ignore_missing_services" ng-model="ignore_missing_services" ng-disabled="!enableBuild">
+                </div>
 
                 <!-- <label for="contract_test" ng-disabled="!enableBuild">CONTRACT_TEST</label>
                 <input type="checkbox" id="tpd" ng-model="contract_test" ng-disabled="!enableBuild"> -->
 
             </div>
+
+            <div class="group">
+                <label>
+                    <input type="checkbox" ng-model="enableScans">Enable Scans
+                </label>
+                <div ng-show="enableScans">
+                    <div class="param-wrapper">
+                        <label>
+                            <input type="checkbox" ng-model="fortifyScan">FORTIFY_SCAN
+                        </label>
+                        <input type="text" ng-model="fortifyTargetBranch" placeholder="FORTIFY_TARGET_BRANCH" ng-show="fortifyScan">
+                    </div>
+                    <div class="param-wrapper">
+                        <label>
+                            <input type="checkbox" ng-model="bdRepoScan">BD_REPO_SCAN
+                        </label>
+                        <input type="text" ng-model="bdProjectVersion" placeholder="BD_PROJECT_VERSION" ng-show="bdRepoScan">
+                        <input type="text" ng-model="bdRepoBranch" placeholder="BD_REPO_BRANCH" ng-show="bdRepoScan">
+                    </div>
+                    <div class="param-wrapper">
+                        <label>
+                            <input type="checkbox" ng-model="mcafeeScan">MCAFEE_SCAN
+                        </label>
+                    </div>
+                    <div class="param-wrapper">
+                        <label>
+                            <input type="checkbox" ng-model="trivyScan">TRIVY_SCAN
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            
 
 
             
