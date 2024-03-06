@@ -17,6 +17,7 @@ app.controller('BuildDeploymentTestController', function($scope) {
     $scope.showBUILD_CONFIG_SNAPSHOT = false;
     $scope.showPKG_SCAN = false;
     $scope.showORG_GRADLE_PROJECT_ocpmCatalogURL = false;
+    // $scope.upgFeatureEnabled = false;
     $scope.showReleaseTags = false;
     $scope.releaseTags = {
         POLICY_RELEASE_TAG: '',
@@ -29,6 +30,14 @@ app.controller('BuildDeploymentTestController', function($scope) {
         CONTRACT_TEST: false,
         INCLUDE_OCC_TEST: false,
         REPORT: false
+    };
+
+    $scope.toggleUpgrade = function(deployment) {
+        // If upgrade is enabled, disable CSAR and ASM
+        if (deployment.upgrade) {
+            deployment.csar = false;
+            deployment.asm = false;
+        }
     };
     
 
@@ -164,6 +173,14 @@ app.controller('BuildDeploymentTestController', function($scope) {
         }
     };
 
+    $scope.parameterList['UPG_FEATURE'] = "true";
+
+    // if ($scope.releaseTags.upgFeatureEnabled !== undefined) {
+    //     $scope.parameterList['UPG_FEATURE'] = $scope.upgFeatureEnabled ? 'true' : 'false';
+    // }
+
+    
+
     
     $scope.appendDeploymentValues = function() {
 
@@ -189,14 +206,37 @@ app.controller('BuildDeploymentTestController', function($scope) {
                 } else {
                     prefix = nfTypePrefix;
                 }
+
+                if (deployment.upgrade) {
+                    if (deployment.nfType === 'policy') {
+                        prefix = 'UPG_POLICY_';
+                        $scope.parameterList['UPG_POLICY_MODE'] = "occnp";
+                    } else if (deployment.nfType === 'bsf') {
+                        prefix = 'UPG_BSF_';
+                    }
+                }
+
+
+                if (deployment.bastionIP === 'other') {
+                    $scope.parameterList['BASTION_IP'] = deployment.otherBastionIP;
+                    $scope.parameterList['BASTION_NAMESPACE'] = deployment.otherBastionNamespace;
+                    $scope.parameterList['BASTION_USERNAME'] = deployment.otherBastionUsername;
+                } else {
     
                 $scope.parameterList[prefix + 'BASTION_IP'] = deployment.bastionIP;
                 $scope.parameterList[prefix + 'BASTION_NAMESPACE'] = deployment.bastionNamespace;
+                }
 
                 if (deployment.bastionIP === '100.100.10' ) {
                     $scope.parameterList[prefix + 'BASTION_USER'] = 'opc';
                 } else if (deployment.bastionIP === '10.10.2') {
                     $scope.parameterList[prefix + 'BASTION_USER'] = 'cloud-user';
+                }
+
+                if (deployment.bastionIP === 'other') {
+                    $scope.parameterList['BASTION_IP'] = deployment.otherBastionIP;
+                    $scope.parameterList['BASTION_NAMESPACE'] = deployment.otherBastionNamespace;
+                    $scope.parameterList['BASTION_USERNAME'] = deployment.otherBastionUsername;
                 }
 
                 if (deployment.testType  === 'pcf' ) {
@@ -232,20 +272,20 @@ app.controller('BuildDeploymentTestController', function($scope) {
         // Reset parameter list
         $scope.parameterList = {};
 
-        if ($scope.oneClickPlayBranch === 'other' ) {
-            if ( $scope.otherBranch.trim() === '') {
-                alert("Please select a One-Click-Play Branch.");
-                return; // Stop further execution
-            }
-            $scope.parameterList['ref'] = $scope.otherBranch;
-        }
-        else {
-            if ( $scope.oneClickPlayBranch.trim() === '') {
-                alert("Please select a One-Click-Play Branch.");
-                return; // Stop further execution
-            }
-            $scope.parameterList['ref'] = $scope.oneClickPlayBranch;
-        }
+        // if ($scope.oneClickPlayBranch === 'other' ) {
+        //     if ( $scope.otherBranch.trim() === '') {
+        //         alert("Please select a One-Click-Play Branch.");
+        //         return; // Stop further execution
+        //     }
+        //     $scope.parameterList['ref'] = $scope.otherBranch;
+        // }
+        // else {
+        //     if ( $scope.oneClickPlayBranch.trim() === '') {
+        //         alert("Please select a One-Click-Play Branch.");
+        //         return; // Stop further execution
+        //     }
+        //     $scope.parameterList['ref'] = $scope.oneClickPlayBranch;
+        // }
 
         for (var key in $scope.releaseTags) {
             if ($scope.releaseTags[key].trim() !== '') {
@@ -355,6 +395,10 @@ app.controller('BuildDeploymentTestController', function($scope) {
         
         if ($scope.deployParams.REPORT !== undefined && $scope.deployParams.REPORT) {
             $scope.parameterList['REPORT'] = 'true';
+        }
+
+        if ($scope.deployParams.upgFeatureEnabled !== undefined && $scope.deployParams.upgFeatureEnabled) {
+            $scope.parameterList['UPG_FEATURE'] = 'true';
         }
         
         if ($scope.deployParams.INCLUDE_OCC_TEST !== undefined && $scope.deployParams.INCLUDE_OCC_TEST) {

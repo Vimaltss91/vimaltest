@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Build, Deployment, Test UI</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-HaXkTllToEqK7+C1vT78aB9I2Zti1fVuLbchzafWhmjI7B7PXlg+BmiHsx48v5cBr1XadJt1uZxVv7jWcjCrVQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="app.js"></script>
 </head>
 <body ng-controller="BuildDeploymentTestController">
@@ -101,8 +100,13 @@
                     <label for="pkg_scan" ng-disabled="!enableBuild">PKG_SCAN</label>
                     <input type="checkbox" id="pkg_scan" ng-model="pkg_scan" ng-disabled="!enableBuild">
 
+                    <!-- <label for="tpd" ng-disabled="!enableBuild">TPD</label>
+                    <input type="checkbox" id="tpd" ng-model="tpd" ng-disabled="!enableBuild"> -->
+
                     <label for="tpd" ng-disabled="!enableBuild">TPD</label>
                     <input type="checkbox" id="tpd" ng-model="tpd" ng-disabled="!enableBuild">
+                    <!-- Notification Message -->
+                    <div ng-show="tpd && enableBuild" style="color: blue;">Don't forget to verify the OCP_TPD_BRANCH!</div>
 
                     <label for="ignore_missing_services" ng-disabled="!enableBuild">IGNORE_MISSING_SERVICES</label>
                     <input type="checkbox" id="ignore_missing_services" ng-model="ignore_missing_services" ng-disabled="!enableBuild">
@@ -207,6 +211,33 @@
                         <input type="text" ng-model="releaseTags.BSF_RELEASE_TAG" placeholder="BSF_RELEASE_TAG">
                         <input type="text" ng-model="releaseTags.ATS_POLICY_RELEASE_TAG" placeholder="ATS_POLICY_RELEASE_TAG">
                         <input type="text" ng-model="releaseTags.ATS_BSF_RELEASE_TAG" placeholder="ATS_BSF_RELEASE_TAG">
+
+                        <label>
+                            <input type="checkbox" ng-model="deployParams.upgFeatureEnabled"> UPG_FEATURE
+                        </label>
+                        <!-- Policy Checkbox -->
+                        <div ng-show="deployParams.upgFeatureEnabled">
+                            <label>
+                                <input type="checkbox" ng-model="policyEnabled"> Policy
+                            </label>
+                            <!-- BSF Checkbox -->
+                            <label>
+                                <input type="checkbox" ng-model="bsfEnabled"> BSF
+                            </label>
+                            <!-- Additional Inputs based on Policy and BSF status -->
+                            <div ng-show="policyEnabled">
+                                <input type="text" ng-model="releaseTags.BASE_POLICY_RELEASE_TAG" placeholder="BASE_POLICY_RELEASE_TAG">
+                                <input type="text" ng-model="releaseTags.BASE_ATS_POLICY_RELEASE_TAG" placeholder="BASE_ATS_POLICY_RELEASE_TAG">
+                                <input type="text" ng-model="releaseTags.UPG_POLICY_RELEASE_TAG" placeholder="UPG_POLICY_RELEASE_TAG">
+                                <input type="text" ng-model="releaseTags.UPG_ATS_POLICY_RELEASE_TAG" placeholder="UPG_ATS_POLICY_RELEASE_TAG">
+                            </div>
+                            <div ng-show="bsfEnabled">
+                                <input type="text" ng-model="releaseTags.BASE_BSF_RELEASE_TAG" placeholder="BASE_BSF_RELEASE_TAG">
+                                <input type="text" ng-model="releaseTags.BASE_ATS_BSF_RELEASE_TAG" placeholder="BASE_ATS_BSF_RELEASE_TAG">
+                                <input type="text" ng-model="releaseTags.UPG_BSF_RELEASE_TAG" placeholder="UPG_BSF_RELEASE_TAG">
+                                <input type="text" ng-model="releaseTags.UPG_ATS_BSF_RELEASE_TAG" placeholder="UPG_ATS_BSF_RELEASE_TAG">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -215,11 +246,12 @@
         <!-- Deployment Sections -->
         <div class="group" ng-repeat="deployment in deployments">
             <h2>Deployment {{$index + 1}}</h2>
-            <!-- <button class="delete-deployment-btn" ng-click="deleteDeployment($index)">
-                <i class="fa fa-trash"></i> 
-            </button> -->
+
+            <label for="upgrade_{{$index}}">UPGRADE_FEATURE</label>
+            <input type="checkbox" id="upgrade_{{$index}}" ng-model="deployment.upgrade">
+
             <button class="delete-deployment-btn" ng-click="deleteDeployment($index)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="10" height="10">
                     <path d="M0 0h24v24H0z" fill="none"/>
                     <path d="M0 0h24v24H0z" fill="none"/>
                     <path d="M19 5h-4.5l-1-1h-5l-1 1H5v2h14zM7 19h10a2 2 0 0 0 2-2V7H5v10a2 2 0 0 0 2 2zm3-8h1v6H9zm4 0h1v6h-1z"/>
@@ -238,20 +270,36 @@
                 <option value="">Select...</option>
                 <option value="100.100.10">oci:100.100.10</option>
                 <option value="10.10.2">cicd 10.10.2</option>
+                <option value="other">Other</option>
             </select>
 
-            <label for="bastion_namespace_{{$index}}">BASTION_NAMESPACE</label>
+            <div ng-if="deployment.bastionIP === 'other'">
+                <input type="text" ng-model="deployment.otherBastionIP" placeholder="Enter BASTION_IP">
+                <input type="text" ng-model="deployment.otherBastionNamespace" placeholder="Enter BASTION_NAMESPACE">
+                <input type="text" ng-model="deployment.otherBastionUsername" placeholder="Enter BASTION_USERNAME">
+            </div>
+            <div ng-if="deployment.bastionIP !== 'other'">
+                <label for="bastion_namespace_{{$index}}">BASTION_NAMESPACE</label>
+                <select id="bastion_namespace_{{$index}}" class="small" ng-model="deployment.bastionNamespace">
+                    <option value="">Select...</option>
+                    <option ng-repeat="namespace in deployment.bastionNamespaces" value="{{namespace}}">{{namespace}}</option>
+                </select>
+                <!-- <label for="bastion_username_{{$index}}">BASTION_USERNAME</label>
+                <input type="text" id="bastion_username_{{$index}}" ng-model="deployment.bastionUsername"> -->
+            </div>
+
+            <!-- <label for="bastion_namespace_{{$index}}">BASTION_NAMESPACE</label>
             <select id="bastion_namespace_{{$index}}" class="small" ng-model="deployment.bastionNamespace">
                 <option value="">Select...</option>
                 <option ng-repeat="namespace in deployment.bastionNamespaces" value="{{namespace}}">{{namespace}}</option>
-            </select>
+            </select> -->
 
-            <label for="csar_{{$index}}">CSAR</label>
-            <input type="checkbox" id="csar_{{$index}}" ng-model="deployment.csar">
+            <label for="csar_{{$index}}" ng-show="!deployment.upgrade">CSAR</label>
+            <input type="checkbox" id="csar_{{$index}}" ng-show="!deployment.upgrade" ng-model="deployment.csar">
             
             <!-- Add ASM Checkbox -->
-            <label for="asm_{{$index}}">ASM</label>
-            <input type="checkbox" id="asm_{{$index}}" ng-model="deployment.asm">
+            <label for="asm_{{$index}}" ng-show="!deployment.upgrade">ASM</label>
+            <input type="checkbox" id="asm_{{$index}}" ng-show="!deployment.upgrade" ng-model="deployment.asm">
 
             <!-- RADIO BUTTON -->
 
